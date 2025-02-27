@@ -16,9 +16,6 @@ export const CONFIG = {
   // Session configuration
   SESSION_SECRET: process.env.SESSION_SECRET || "your-secret-key",
 
-  // Email configuration
-  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
-
   // Rate limiting
   RATE_LIMIT_WINDOW_MS: 15 * 60 * 1000, // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: 100, // number of requests per window
