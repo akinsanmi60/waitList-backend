@@ -2,7 +2,7 @@ import { randomBytes } from "crypto";
 import { sendWaitlist } from "../mailers/senders";
 import { insertWaitlistSchema } from "../shared/schema";
 import { storage } from "../storage";
-import { Router, Request, Response } from "express";
+import { Request, Response } from "express";
 import { ZodError } from "zod";
 
 /**

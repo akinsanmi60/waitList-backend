@@ -8,6 +8,7 @@ import {
 const router = Router();
 
 router.post("/api/waitlist", async (req: Request, res: Response) => {
+  console.log("req.body", req.body);
   await createWaitlistEntry(req, res);
 });
 

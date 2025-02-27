@@ -5,7 +5,7 @@ config();
 
 export const CONFIG = {
   // Server configuration
-  PORT: process.env.PORT || 5000,
+  PORT: process.env.PORT,
   NODE_ENV: process.env.NODE_ENV || "development",
 
   // Database configuration
@@ -30,8 +30,3 @@ export const CONFIG = {
   HEALTH_CHECK_PATH: "/health",
   HEALTH_CHECK_INTERVAL: 30000, // 30 seconds
 } as const;
-
-//     "dev": "cross-env NODE_ENV=development concurrently \"vite\" \"tsx server/index.ts\"",
-//     "build": "npm run build:frontend && npm run build:backend",
-//     "start": "node dist/server/index.ts",
-//
