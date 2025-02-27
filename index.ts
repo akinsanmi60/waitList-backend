@@ -6,11 +6,16 @@ import rateLimit from "express-rate-limit";
 import { CONFIG } from "./config";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import { credentials } from "./credentials";
 
 config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Handle options credentials check - before CORS!
+// and fetch cookies credentials requirement
+app.use(credentials);
 
 // Configure rate limiting - more permissive in development
 const limiter = rateLimit({

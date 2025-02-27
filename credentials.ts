@@ -5,7 +5,7 @@ const allowedOrigins = [
   process.env.CORS_ORIGIN,
   "http://localhost:5173",
 ];
-
+console.log("allowedOrigins", allowedOrigins);
 export const configOptions = {
   csp: {
     "default-src": ["'self'"], // Restrict everything to same-origin by default
