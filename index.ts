@@ -1,9 +1,15 @@
 import express, { Request, Response } from "express";
 import router from "./routes";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import { config } from "dotenv";
+
+config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(cors());
 
 // built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: true }));
@@ -17,7 +23,7 @@ app.use(cookieParser());
 app.use(router);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript with Express!");
+  res.send("⚡️⚡️⚡️Hello, Humoni Waitlist running!");
 });
 
 app.listen(port, () => {
