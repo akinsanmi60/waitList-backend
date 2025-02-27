@@ -9,7 +9,13 @@ config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    methods: ["GET", "POST"],
+    optionsSuccessStatus: 200,
+  })
+);
 
 // built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: true }));
