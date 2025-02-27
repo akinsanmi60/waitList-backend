@@ -2,12 +2,52 @@ import express, { Request, Response } from "express";
 import router from "./routes";
 import cookieParser from "cookie-parser";
 import { config } from "dotenv";
+import rateLimit from "express-rate-limit";
 import { CONFIG } from "./config";
+import session from "express-session";
+import MemoryStore from "memorystore";
+import cors from "cors";
 
 config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
+
+// Configure rate limiting - more permissive in development
+const limiter = rateLimit({
+  windowMs: CONFIG.RATE_LIMIT_WINDOW_MS,
+  max:
+    CONFIG.NODE_ENV === "development" ? 1000 : CONFIG.RATE_LIMIT_MAX_REQUESTS,
+  message: {
+    success: false,
+    error: "RATE_LIMIT_EXCEEDED",
+    message: "Too many requests, please try again later",
+  },
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+});
+
+// Apply rate limiting to all routes except in development
+if (CONFIG.NODE_ENV !== "development") {
+  app.use(limiter);
+}
+
+// Configure session handling
+const SessionStore = MemoryStore(session);
+app.use(
+  session({
+    store: new SessionStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    }),
+    secret: CONFIG.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: CONFIG.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
 // built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: true }));
@@ -18,7 +58,21 @@ app.use(express.json());
 // middleware for cookies
 app.use(cookieParser());
 
+app.use(
+  cors({
+    origin: CONFIG.CORS_ORIGIN,
+    credentials: true, // Allows cookies and authorization headers
+  })
+);
+
 app.use(router);
+
+// Health check endpoint
+app.get(CONFIG.HEALTH_CHECK_PATH, (_req, res) => {
+  res
+    .status(200)
+    .json({ status: "healthy", timestamp: new Date().toISOString() });
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send("⚡️⚡️⚡️Hello, Humoni Waitlist running!");

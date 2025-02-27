@@ -11,12 +11,7 @@ export const sendWaitlist = async (mailData: MailData<{ name: string }>) => {
   await sendMail({
     to: mailData.to,
     subject: emailConfirmTitle,
-    templatePath: path.join(
-      process.cwd(),
-      "src",
-      "mail-templates",
-      "waitlist.hbs"
-    ),
+    templatePath: path.join(process.cwd(), "mail-templates", "waitlist.hbs"),
     context: {
       title: emailConfirmTitle,
       actionTitle: emailConfirmTitle,
