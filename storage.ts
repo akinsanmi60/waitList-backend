@@ -2,7 +2,8 @@ import {
   waitlist,
   type Waitlist,
   type InsertWaitlist,
-  WAITLIST_POSITION_THRESHOLD,
+  ContactFormValues,
+  contactUs,
 } from "./shared/schema";
 import { DB } from "./dbConfig";
 import { desc, eq, sql } from "drizzle-orm";
@@ -34,27 +35,15 @@ export class DatabaseStorage implements IStorage {
           throw new Error("This email is already registered for the waitlist");
         }
 
-        // Get current count to determine if we should assign positions
-        const [{ count }] = await tx
-          .select({ count: sql<number>`count(*)` })
+        // Get the current count correctly
+        const countResult = await tx
+          .select({ count: sql<number>`COUNT(*)` }) // Ensure COUNT(*) is properly extracted
           .from(waitlist);
 
-        let position = null;
+        const count = countResult[0]?.count ?? 0; // Extract the count properly
 
-        // Only assign position if we've reached the threshold
-        if (count >= WAITLIST_POSITION_THRESHOLD - 1) {
-          // -1 because current entry isn't counted yet
-          position = count + 1;
-
-          // If this is exactly the threshold entry, we need to assign positions to all previous entries
-          if (count === WAITLIST_POSITION_THRESHOLD - 1) {
-            // Assign positions 1 through threshold-1 to existing entries
-            await tx.update(waitlist).set({
-              position: sql`row_number() over (order by "created_at" asc)`,
-              lastPositionUpdate: new Date(),
-            });
-          }
-        }
+        // Always assign a position (count + 1)
+        const position = Number(count) + 1;
 
         // Create the new entry
         const [waitlistEntry] = await tx
@@ -133,6 +122,15 @@ export class DatabaseStorage implements IStorage {
         .where(eq(waitlist.id, userId));
     } catch (error) {
       console.error("Database error in updatePosition:", error);
+      throw error;
+    }
+  }
+
+  async createContactUsReply(data: ContactFormValues) {
+    try {
+      await DB.insert(contactUs).values(data);
+    } catch (error) {
+      console.error("Database error in createContactUsReply:", error);
       throw error;
     }
   }

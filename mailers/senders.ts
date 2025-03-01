@@ -21,3 +21,20 @@ export const sendWaitlist = async (mailData: MailData<{ name: string }>) => {
     },
   });
 };
+export const sendContactUsReply = async (
+  mailData: MailData<{ name: string }>
+) => {
+  const emailConfirmTitle = "Thank you for your message! 🎉";
+  await sendMail({
+    to: mailData.to,
+    subject: emailConfirmTitle,
+    templatePath: path.join(process.cwd(), "mail-templates", "waitlist.hbs"),
+    context: {
+      title: emailConfirmTitle,
+      actionTitle: emailConfirmTitle,
+      app_name: "Humoni",
+      name: mailData.data.name,
+      year: new Date().getFullYear(),
+    },
+  });
+};

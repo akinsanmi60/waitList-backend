@@ -74,3 +74,28 @@ export const MILESTONES = {
   TEN_REFERRALS: "ten_referrals",
   TOP_HUNDRED: "top_hundred",
 } as const;
+
+export const contactUs = pgTable("contact_us", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  consent: boolean("consent").notNull(),
+});
+
+export const contactFormSchema = createInsertSchema(contactUs)
+  .pick({
+    name: true,
+    email: true,
+    message: true,
+    consent: true,
+  })
+  .extend({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Please enter a valid email address"),
+    message: z.string().min(10, "Message must be at least 10 characters"),
+    consent: z.boolean(),
+  });
+
+export type ContactFormValues = z.infer<typeof contactFormSchema>;
