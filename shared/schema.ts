@@ -10,6 +10,16 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// User table for authentication
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  isAdmin: integer("is_admin").default(0).notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const waitlist = pgTable("waitlist", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -99,3 +109,24 @@ export const contactFormSchema = createInsertSchema(contactUs)
   });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;
+
+// Schema for inserting new users
+export const insertUserSchema = createInsertSchema(users)
+  .pick({
+    username: true,
+    password: true,
+    email: true,
+    isAdmin: true,
+  })
+  .extend({
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    email: z.string().email("Please enter a valid email address"),
+    isAdmin: z.number().optional().default(0),
+  });
+
+// Type for insert operations
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
+// Type for database records
+export type User = typeof users.$inferSelect;

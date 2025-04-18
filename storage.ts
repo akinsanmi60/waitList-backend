@@ -4,9 +4,19 @@ import {
   type InsertWaitlist,
   ContactFormValues,
   contactUs,
+  users,
+  User,
+  InsertUser,
 } from "./shared/schema";
-import { DB } from "./dbConfig";
+import { DB, pool } from "./dbConfig";
 import { desc, eq, sql } from "drizzle-orm";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+import createMemoryStore from "memorystore";
+
+// Create session stores
+const PgSessionStore = connectPgSimple(session);
+const MemoryStore = createMemoryStore(session);
 
 export interface IStorage {
   createWaitlistEntry(
@@ -17,9 +27,35 @@ export interface IStorage {
   getWaitlistCount(): Promise<number>;
   getReferralCount(referralCode: string): Promise<number>;
   updatePosition(userId: number, newPosition: number): Promise<void>;
+  createUser(user: InsertUser): Promise<User>;
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
+  sessionStore: any;
+
+  constructor() {
+    try {
+      // Try using PostgreSQL for session storage
+      this.sessionStore = new PgSessionStore({
+        pool,
+        tableName: "session",
+        createTableIfMissing: true,
+      });
+      console.log("Using PostgreSQL for session storage");
+    } catch (error) {
+      // Fallback to memory store if there's an issue
+      console.warn(
+        "Failed to initialize PostgreSQL session store, falling back to memory store:",
+        error
+      );
+      this.sessionStore = new MemoryStore({
+        checkPeriod: 86400000, // prune expired entries every 24h
+      });
+      console.log("Using in-memory session storage");
+    }
+  }
   async createWaitlistEntry(
     entry: InsertWaitlist & { referralCode: string; referredBy?: string }
   ): Promise<Waitlist> {
@@ -132,6 +168,39 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Database error in createContactUsReply:", error);
       throw error;
+    }
+  }
+
+  // User operations
+  async createUser(user: InsertUser): Promise<User> {
+    try {
+      const [newUser] = await DB.insert(users).values(user).returning();
+      return newUser;
+    } catch (error) {
+      console.error("Database error in createUser:", error);
+      throw error;
+    }
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    try {
+      const [user] = await DB.select().from(users).where(eq(users.id, id));
+      return user;
+    } catch (error) {
+      console.error("Database error in getUser:", error);
+      return undefined;
+    }
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    try {
+      const [user] = await DB.select()
+        .from(users)
+        .where(eq(users.username, username));
+      return user;
+    } catch (error) {
+      console.error("Database error in getUserByUsername:", error);
+      return undefined;
     }
   }
 }

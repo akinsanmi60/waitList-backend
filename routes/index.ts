@@ -3,9 +3,9 @@ import {
   createWaitlistEntry,
   getWaitlistEntries,
   getWaitlistPosition,
-} from "./services/waitlist-router-service";
+} from "../services/waitlist-router-service";
 
-import { contactUsServices } from "./services/contact-router-service";
+import { contactUsServices } from "../services/contact-router-service";
 
 const router = Router();
 

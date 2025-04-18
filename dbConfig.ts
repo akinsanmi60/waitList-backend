@@ -6,7 +6,7 @@ import { CONFIG } from "./config";
 
 config();
 
-const pool = new pg.Pool({
+export const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   connectionTimeoutMillis: CONFIG.DB_RECONNECT_INTERVAL,
   max: 20, // maximum number of clients in the pool

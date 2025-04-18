@@ -7,6 +7,7 @@ import { CONFIG } from "./config";
 import session from "express-session";
 import MemoryStore from "memorystore";
 import cors from "cors";
+import { setupAuth } from "./auth";
 
 config();
 
@@ -64,6 +65,8 @@ app.use(
     credentials: true, // Allows cookies and authorization headers
   })
 );
+
+setupAuth(app);
 
 app.use(router);
 
