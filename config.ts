@@ -26,6 +26,8 @@ export const CONFIG = {
   // Cors configuration
   CORS_ORIGIN: process.env.CORS_ORIGIN || "*",
 
+  CORS_ORIGINB: process.env.CORS_ORIGIN || "*",
+
   // Health check
   HEALTH_CHECK_PATH: "/health",
   HEALTH_CHECK_INTERVAL: 30000, // 30 seconds

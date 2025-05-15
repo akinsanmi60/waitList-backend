@@ -61,7 +61,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: CONFIG.CORS_ORIGIN,
+    origin: [CONFIG.CORS_ORIGIN, CONFIG.CORS_ORIGINB],
     credentials: true, // Allows cookies and authorization headers
   })
 );
