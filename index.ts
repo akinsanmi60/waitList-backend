@@ -6,9 +6,17 @@ import rateLimit from "express-rate-limit";
 import { CONFIG } from "./config";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import cors from "cors";
 import { setupAuth } from "./auth";
 
 config();
+
+const corsOption = {
+  origin: [CONFIG.CORS_ORIGIN, CONFIG.CORS_ORIGINB],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -57,6 +65,11 @@ app.use(express.json());
 
 // middleware for cookies
 app.use(cookieParser());
+
+app.use(cors(corsOption));
+
+// Handle preflight requests
+app.options("*", cors(corsOption)); // Enable preflight for all routes
 
 setupAuth(app);
 
