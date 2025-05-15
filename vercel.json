@@ -11,45 +11,5 @@
       "src": "/(.*)",
       "dest": "/"
     }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://rentals.joinhumoni.com, https://www.joinhumoni.com, https://wait-list-humoni-5yi6.vercel.app"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,POST,PUT,DELETE,OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, X-Requested-With"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        },
-        {
-          "key": "Access-Control-Max-Age",
-          "value": "86400"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://rentals.joinhumoni.com, https://www.joinhumoni.com, https://wait-list-humoni-5yi6.vercel.app"
-        },
-        {
-          "key": "Access-Control-Expose-Headers",
-          "value": "Content-Length, X-JSON"
-        }
-      ]
-    }
   ]
 }
