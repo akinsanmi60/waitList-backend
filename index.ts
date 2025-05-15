@@ -12,7 +12,12 @@ import { setupAuth } from "./auth";
 config();
 
 const corsOption = {
-  origin: [CONFIG.CORS_ORIGIN, CONFIG.CORS_ORIGINB],
+  // origin: [CONFIG.CORS_ORIGIN, CONFIG.CORS_ORIGINB],
+  origin: [
+    "https://rentals.joinhumoni.com",
+    "https://www.joinhumoni.com",
+    "https://wait-list-backend-zeta.vercel.app",
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
