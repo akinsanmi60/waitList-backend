@@ -30,5 +30,5 @@ export const CONFIG = {
 
   // Health check
   HEALTH_CHECK_PATH: "/health",
-  HEALTH_CHECK_INTERVAL: 30000, // 30 seconds
+  HEALTH_CHECK_INTERVAL: 30000,
 } as const;
