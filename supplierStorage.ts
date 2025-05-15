@@ -327,8 +327,6 @@ export class DatabaseStorage implements IStorage {
       createdAt: new Date(),
     };
 
-    console.log(inquiry, "+++++++++++++++++++++++");
-
     try {
       const [newInquiry] = await DB.insert(inquiries)
         .values(inquiry)

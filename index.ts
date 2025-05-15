@@ -59,12 +59,14 @@ app.use(express.json());
 // middleware for cookies
 app.use(cookieParser());
 
-// app.use(
-//   cors({
-//     origin: [CONFIG.CORS_ORIGIN, CONFIG.CORS_ORIGINB],
-//     credentials: true, // Allows cookies and authorization headers
-//   })
-// );
+app.use(
+  cors({
+    origin: [CONFIG.CORS_ORIGIN, CONFIG.CORS_ORIGINB],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 setupAuth(app);
 
